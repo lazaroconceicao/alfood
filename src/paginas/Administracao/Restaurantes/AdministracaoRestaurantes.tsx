@@ -1,4 +1,5 @@
 import {
+  Button,
   Paper,
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import ListaRestaurantes from "../../../componentes/ListaRestaurantes";
 import IRestaurante from "../../../interfaces/IRestaurante";
 
 const AdministracaoRestaurantes = () => {
@@ -23,13 +25,22 @@ const AdministracaoRestaurantes = () => {
       });
   }, []);
 
+  const excluir = (restauranteAhSerExcluido: IRestaurante) => {
+    axios.delete(`http://localhost:8000/api/v2/restaurantes/${restauranteAhSerExcluido.id}/`)
+    .then(() => {
+      const listaRestaurante = restaurantes.filter(restaurante => restaurante.id !== restauranteAhSerExcluido.id)
+      setRestaurantes([...listaRestaurante])
+    })
+  }
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Nome</TableCell>
-            <TableCell>Editar</TableCell>            
+            <TableCell>Editar</TableCell>
+            <TableCell>Excluir</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -37,7 +48,12 @@ const AdministracaoRestaurantes = () => {
             <TableRow key={restaurante.id}>
               <TableCell>{restaurante.nome}</TableCell>
               <TableCell>
-                [ <Link to={`/admin/restaurantes/${restaurante.id}`}>editar</Link> ]
+                [{" "}
+                <Link to={`/admin/restaurantes/${restaurante.id}`}>editar</Link>{" "}
+                ]
+              </TableCell>
+              <TableCell>
+                <Button variant="outlined" color="error" onClick={() => excluir(restaurante)}>Excluir</Button>
               </TableCell>
             </TableRow>
           ))}

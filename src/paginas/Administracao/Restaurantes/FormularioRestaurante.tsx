@@ -1,17 +1,16 @@
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import IRestaurante from "../../../interfaces/IRestaurante";
+import { Box } from "@mui/system";
+import http from "../../../http";
 
 const FormularioRestaurante = () => {
   const parametros = useParams();
 
   useEffect(() => {
     if (parametros.id) {
-      axios
-        .get<IRestaurante>(
-          `http://localhost:8000/api/v2/restaurantes/${parametros.id}/`
+      http.get<IRestaurante>(`restaurantes/${parametros.id}/`
         )
         .then((resposta) => setNomeRestaurante(resposta.data.nome));
     }
@@ -23,16 +22,14 @@ const FormularioRestaurante = () => {
     evento.preventDefault();
 
     if (parametros.id) {
-      axios
-        .put(`http://localhost:8000/api/v2/restaurantes/${parametros.id}/`, {
+      http.put(`restaurantes/${parametros.id}/`, {
           nome: nomeRestaurante,
         })
         .then(() => {
           alert("Restaurante atualizado com sucesso!");
         });
     } else {
-      axios
-        .post("http://localhost:8000/api/v2/restaurantes/", {
+      http.post("restaurantes/", {
           nome: nomeRestaurante,
         })
         .then(() => {
@@ -42,17 +39,31 @@ const FormularioRestaurante = () => {
   };
 
   return (
-    <form onSubmit={aoSubmeterForm}>
-      <TextField
-        value={nomeRestaurante}
-        onChange={(evento) => setNomeRestaurante(evento.target.value)}
-        label="Nome do Restaurante"
-        variant="standard"
-      />
-      <Button type="submit" variant="outlined">
-        Salvar
-      </Button>
-    </form>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    >
+      <Box component="form" onSubmit={aoSubmeterForm}>
+        <Typography component="h1" variant="h6">
+          Formulário de Restaurantes
+        </Typography>
+        <TextField
+          value={nomeRestaurante}
+          onChange={(evento) => setNomeRestaurante(evento.target.value)}
+          label="Nome do Restaurante"
+          variant="standard"
+          required
+          fullWidth
+        />
+        <Button
+          sx={{ marginTop: 2 }}
+          type="submit"
+          fullWidth
+          variant="outlined"
+        >
+          Salvar
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
